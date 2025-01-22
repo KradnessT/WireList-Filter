@@ -1,12 +1,13 @@
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter
 
-wb = load_workbook("raw_data.xlsx") # 讀取'raw_data.xlsx'這個檔案
-ws = wb["QAQ"] # 選擇'QAQ'這個活頁簿
+wb = load_workbook("raw_data.xlsx") # 設定要執行的檔案名稱
+ws = wb["QAQ"] # 設定要執行活頁簿名稱
+row_count = 70 # 看WireList多寡設定作用到第幾行
 
-def Panel_name():
+def Panel_name(row_count):
     for col in range(1,2):
-        for row in range(7,70):
+        for row in range(7,row_count):
             char = get_column_letter(col)
             cells_1 = ws[char + str(row)].value
             row1 = row + 1
@@ -14,7 +15,7 @@ def Panel_name():
                 cells_1 = ""
             elif "<->" in str(cells_1):
                 ws.merge_cells("A" + str(row) + ":E" + str(row)) # '盤名<->盤名'合併
-                for row_1 in range(row1,70):
+                for row_1 in range(row1,row_count):
                     cells_2 = ws[char + str(row_1)].value
                     row_2 = row_1 - 1
                     if cells_1 is None:
@@ -23,16 +24,16 @@ def Panel_name():
                         ws.merge_cells("B" + str(row1) + ":B" + str(row_2)) # 'Symbol ID'合併
                         break
 
-def Item():
+def Item(row_count):
     for col in range(1,2):
-        for row in range(7,70):
+        for row in range(7,row_count):
             char = get_column_letter(col)
             cells_1 = ws[char + str(row)].value
             row1 = row + 1
             if cells_1 is None:
                 cells_1 = ""
             elif "<->" not in str(cells_1) and str(cells_1) != "":
-                for row_1 in range(row1,70):
+                for row_1 in range(row1,row_count):
                     cells_2 = ws[char + str(row_1)].value
                     row_2 = row_1 - 1
                     cells_3 = ws["I" + str(row)].value
@@ -49,7 +50,7 @@ def Item():
                             ws.merge_cells("I" + str(row) + ":M" + str(row_2))
                         break
 
-Panel_name()
-Item()
+Panel_name(row_count)
+Item(row_count)
 
 wb.save("raw_data.xlsx")
